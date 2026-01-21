@@ -1,0 +1,192 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0px;
+  font-family: "NotoSans";
+  font-size: 14px;
+}
+
+/* --최상단 검은 네이게이션 바-- */
+.Black-Bar {
+  background-color: black;
+  height: 3rem;
+  width: 100%;
+  color: white;
+  padding: 0px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.Black-Bar-Left {
+  justify-content: flex-start;
+}
+.Black-Bar-Left span {
+  border-left: 1px solid white;
+  padding-left: 8px;
+  margin-left: 8px;
+}
+.Black-Bar-Right {
+  justify-content: flex-end;
+}
+.Black-Bar-Right span {
+  padding-left: 24px;
+}
+
+/* 최상단 header를 제외한 나머지 레이아웃 padding 값 컴포넌트 */
+.MainLayout {
+  padding: 20px 48px;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* --네비게이션바-- */
+.navbar {
+  display: flex;
+  width: 100%;
+  align-items: center;
+}
+
+.navbar-search {
+  margin: 0px 40px;
+  background-color: lightgray;
+  width: 600px;
+  height: 48px;
+  border-radius: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.navbar-search input {
+  width: 80%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  margin: 0px 10px;
+}
+.navbar-search i {
+  margin: 0px 10px;
+}
+
+.navbar-carmera {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* 카메라 hover 시에만 동그란 배경 색 나오게 */
+.navbar-carmera:hover {
+  background-color: #b0b0b0;
+}
+
+.navbar-icon-group {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+.navbar-icon-group i {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+}
+/* 아이콘 그룹 i 태그 들 전부 hover 시에만 동그란 배경 색 나오게 */
+.navbar-icon-group i:hover {
+  background-color: #b0b0b0;
+}
+
+/* 메뉴 종류 바 */
+.menu_Navbar {
+  border-bottom: 1px solid lightgray;
+  gap: 30px;
+  margin: 30px 0px;
+}
+
+.menu_Navbar div {
+  padding-bottom: 15px;
+}
+/* --Test CSS HTML 공부하기-- */
+
+/* .shop-container {
+  width: 100%;
+  height: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.shop-item {
+  margin-right: 10px;
+}
+
+.shop-item img {
+  width: 200px;
+} */
+
+.card_wrapper {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+/* 스크롤바 전체 */
+.card_wrapper::-webkit-scrollbar {
+  height: 5px;
+}
+
+/* 좌우 화살표 */
+.card_wrapper::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* 스크롤 트랙 */
+.card_wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 드래그 바 */
+.card_wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+
+/*  스크롤바 hover시 */
+.card_wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.card_item {
+  min-width: 80px;
+  flex-shrink: 0;
+  overflow: hidden;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card_item img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+}
+
+.card_item p {
+  text-align: center;
+  font-size: 13px;
+  padding-top: 8px;
+}
