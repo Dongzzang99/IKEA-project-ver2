@@ -48,15 +48,14 @@ function App() {
 
       <div className="flex-1">
         <MainLayout>
-          {/* 검색 컴포넌트 */}
+          {/* 로고, 검색, 아이콘 컴포넌트 */}
           <ContainerNavbar />
-
-          {/* 가구 카테고리 카드1 */}
-          <MenuNavbar onSelectCategory={handleSelectCategory} />
-
-          {/* 가구 카테고리 카드2 - 카테고리 카드 누르면 나오는 리스트 */}
-          <CategoryProductList category={selectedCategory} isOpen={isOpen} />
-
+          <div className="hidden lg:block">
+            {/* 가구 카테고리 카드1 */}
+            <MenuNavbar onSelectCategory={handleSelectCategory} />
+            {/* 가구 카테고리 카드2 - 카테고리 카드 누르면 나오는 리스트 */}
+            <CategoryProductList category={selectedCategory} isOpen={isOpen} />
+          </div>
           <Routes>
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/products/:id" element={<ProductDetailPage />} />

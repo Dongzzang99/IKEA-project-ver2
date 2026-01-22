@@ -75,18 +75,19 @@ function Cart() {
 
   // item.title 물건 이름
   return (
-    <div className="flex justify-center gap-6 p-3">
-      <div className="w-5/10">
+    <div className="flex flex-col md:flex-row md:justify-center gap-6 p-3 w-full">
+      {/* 왼쪽: 장바구니 리스트 */}
+      <div className="w-full md:w-3/5">
         <div className="text-[2rem] font-bold mb-4">장바구니</div>
 
         {/* 여부 확인 박스 */}
-        <div className="border-2 rounded-[4px] border-gray-300 py-6 px-6 mb-4 w-[100%] flex justify-between items-center hover:border-gray-500 ">
+        <div className="border-2 rounded-[4px] border-gray-300 py-6 px-6 mb-4 w-full flex justify-between items-center hover:border-gray-500">
           <div>
-            <p className=" text-[0.8rem] font-semibold">
+            <p className="text-[0.8rem] font-semibold">
               배송 및 기타 서비스 이용 가능 여부 확인
             </p>
           </div>
-          <i className="fas fa-arrow-right "></i>
+          <i className="fas fa-arrow-right"></i>
         </div>
 
         {/* 물건 표시 창 */}
@@ -140,8 +141,8 @@ function Cart() {
         ))}
       </div>
 
-      {/* 주문 내역 div */}
-      <div className="w-4/10 ">
+      {/* 오른쪽: 주문 내역 */}
+      <div className="w-full md:w-2/5">
         <div className="text-[1rem] font-bold mb-8">주문내역</div>
 
         <div className="flex justify-between border-b border-gray-500 pb-8 mb-8">
@@ -154,7 +155,7 @@ function Cart() {
           </div>
         </div>
 
-        <div className=" mb-16 pb-8 flex items-center justify-between border-b border-gray-300">
+        <div className="mb-16 pb-8 flex items-center justify-between border-b border-gray-300">
           <div>합계(VAT 포함)</div>
           <div className="text-[1.3rem] font-bold">
             ₩ {totalPrice.toLocaleString()}
@@ -164,12 +165,12 @@ function Cart() {
         <div>
           <div
             className="rounded-[4px] bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-bold py-8 px-6 w-[90%] flex justify-between items-center mx-auto"
-            onClick={handleCheckout} // 결제 버튼에서 Redux 반영
+            onClick={handleCheckout}
           >
             <div>
-              <p className=" text-[0.8rem] font-semibold">결제하기</p>
+              <p className="text-[0.8rem] font-semibold">결제하기</p>
             </div>
-            <i className="fas fa-arrow-right "></i>
+            <i className="fas fa-arrow-right"></i>
           </div>
         </div>
       </div>
