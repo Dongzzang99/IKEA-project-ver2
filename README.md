@@ -5,7 +5,7 @@
 
 IKEA 공식 웹사이트를 참고하여 제작한 **가구 주문 웹 페이지 클론 프로젝트**입니다.  
 
-미리보기 사이트 주소 : https://dongzzang99.github.io/IKEA-project/
+미리보기 사이트 주소 : https://dongzzang99.github.io/IKEA-project-ver2/
 
 
 ---
