@@ -17,6 +17,7 @@ function HomePage() {
 function HomePage_Main() {
   return (
     <div>
+      
       {/* 바로 위 상단 검색바 \components\layout\ContainerNavbar.jsx */}
       {/* main 상단 버튼 2개  */}
       <div className="flex justify-between gap-4 pb-8">
@@ -39,12 +40,11 @@ function HomePage_Main() {
       </div>
 
       {/* main 신제품,이벤트 홍보 */}
-      {/* main 신제품,이벤트 홍보 */}
       <div className="flex flex-col md:flex-row gap-4 w-full">
         {/* 왼쪽 1번 카드 */}
         <div className="w-full md:w-1/2 relative">
           <a
-            href="www.naver.com"
+            href="/IKEA-project-ver2/ebusan"
             className="relative block w-full aspect-square md:aspect-auto md:h-full"
           >
             <img

@@ -9,11 +9,21 @@ import {
   Footer,
 } from "./components/layout";
 import { MenuNavbar, CategoryProductList } from "./components/menu";
-import { HomePage } from "./pages";
+import { HomePage,BusanApi } from "./pages";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import Cart from "./pages/Cart";
 
 import { Route, Routes, useLocation } from "react-router-dom";
+
+function ScrollToTop(){
+  const {pathname} = useLocation();
+
+  useEffect(()=>{
+    window.scrollTo({top:0, left:0, behavior:"auto"});
+  },[pathname]);
+
+  return null;
+}
 
 function App() {
   // 카테고리 상태 + 열림 상태 추가
@@ -56,10 +66,12 @@ function App() {
             {/* 가구 카테고리 카드2 - 카테고리 카드 누르면 나오는 리스트 */}
             <CategoryProductList category={selectedCategory} isOpen={isOpen} />
           </div>
+          <ScrollToTop/>
           <Routes>
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/ebusan" element={<BusanApi/>} />
           </Routes>
         </MainLayout>
       </div>
