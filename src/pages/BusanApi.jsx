@@ -48,7 +48,7 @@ export default function BusanApi() {
             <div className="text-lg font-bold">주소</div>
             <p>IKEA 동부산점</p>
             <p>기장읍 동부산관광3로 17</p>
-            <p>부산광역시 기장군</p>
+            <p>부산광역시 기장</p>
             <p>46084</p>
           </div>
         </div>
