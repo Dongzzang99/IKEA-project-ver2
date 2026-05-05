@@ -9,7 +9,7 @@ import {
   Footer,
 } from "./components/layout";
 import { MenuNavbar, CategoryProductList } from "./components/menu";
-import { HomePage,BusanApi } from "./pages";
+import { HomePage, BusanApi, LoginPage, SignupPage } from "./pages";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import Cart from "./pages/Cart";
 
@@ -72,6 +72,8 @@ function App() {
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/ebusan" element={<BusanApi/>} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
           </Routes>
         </MainLayout>
       </div>
