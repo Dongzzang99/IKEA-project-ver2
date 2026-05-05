@@ -1,1 +1,11 @@
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\config\CorsConfig.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\controller\AuthController.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\dto\SignupRequest.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\dto\SignupResponse.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\entity\User.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\exception\DuplicateEmailException.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\exception\GlobalExceptionHandler.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\exception\PasswordMismatchException.java
 C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\IkeaOrderingBackendApplication.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\repository\UserRepository.java
+C:\Users\강동현\Desktop\Other\ProjectFile\Portfolio-ordering-system\IKEA-project-ver2\backend\src\main\java\com\portfolio\ikea\service\AuthService.java
