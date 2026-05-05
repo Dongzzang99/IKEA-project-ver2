@@ -18,9 +18,12 @@ function ContainerNavbar() {
 
         {/* 아이콘 그룹 */}
         <div className="order-2 lg:order-3 ml-auto flex gap-[10px] items-center h-[44px] lg:h-[48px] flex-none">
-          <div className="flex items-center justify-center w-[44px] h-[44px] rounded-full hover:bg-[#b0b0b0] cursor-pointer">
+          <Link
+            to="/login"
+            className="flex items-center justify-center w-[44px] h-[44px] rounded-full hover:bg-[#b0b0b0]"
+          >
             <i className="fas fa-user text-[18px] lg:text-[20px] leading-none"></i>
-          </div>
+          </Link>
 
           <div className="flex items-center justify-center w-[44px] h-[44px] rounded-full hover:bg-[#b0b0b0] cursor-pointer">
             <i className="far fa-heart text-[18px] lg:text-[20px] leading-none"></i>
