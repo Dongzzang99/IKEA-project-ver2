@@ -32,7 +32,7 @@ export default function BusanApi() {
 
   return (
     <div>
-        <div>유튜브 들어갈 자리</div>
+ 
         <div className=" border-gray-300 border-b-1">
             IKEA 동부산점 아직 방문 전인가요? 미리 방문해 보세요!
         <div className="border-1 w-[300px] sm:flex-1 h-[40px] rounded-full hover:bg-blue-700 cursor-pointer font-bold flex items-center justify-center transition">
