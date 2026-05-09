@@ -166,3 +166,17 @@ body {
   font-size: 13px;
   padding-top: 8px;
 }
+
+.account-panel-slide {
+  animation: accountPanelSlideIn 220ms ease-out;
+}
+
+@keyframes accountPanelSlideIn {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}

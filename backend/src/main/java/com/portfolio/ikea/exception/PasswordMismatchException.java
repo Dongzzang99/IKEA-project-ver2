@@ -1,6 +1,6 @@
 package com.portfolio.ikea.exception;
 
-// 비밀번호와 비밀번호 확인이 다를 때 쓰는 에러
+// 비밀번호 확인 불일치 예외
 public class PasswordMismatchException extends RuntimeException {
 
     public PasswordMismatchException() {

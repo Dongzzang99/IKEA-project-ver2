@@ -1,7 +1,21 @@
-import productList from "../data/productList";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getSpecialPriceProducts } from "../api/products";
 
 function HomePage_SpecialPrice() {
+  const [products, setProducts] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    getSpecialPriceProducts()
+      .then((data) => {
+        setProducts(data.slice(0, 10));
+      })
+      .catch(() => {
+        setErrorMessage("특가 상품을 불러오지 못했습니다.");
+      });
+  }, []);
+
   return (
     <div>
       <p className="py-8 font-bold text-[1.5rem]">놓치면 아쉬운 특가</p>
@@ -11,10 +25,11 @@ function HomePage_SpecialPrice() {
       {/*  특가 상품 영역*/}
       <div className="overflow-x-auto">
         <div className="flex gap-6 w-max pb-4">
-          {productList
-            .filter((item) => item.specialPrice) // specialPrice == true 인것들만
-            .slice(0, 10) //10개 반복
-            .map((item) => {
+          {errorMessage && (
+            <p className="text-sm font-bold text-gray-600">{errorMessage}</p>
+          )}
+
+          {products.map((item) => {
               const discountPrice = Math.floor(
                 item.price * (1 - item.sale / 100)
               );

@@ -1,6 +1,6 @@
 package com.portfolio.ikea.exception;
 
-// 이미 가입된 이메일일 때 쓰는 에러
+// 이메일 중복 가입 예외
 public class DuplicateEmailException extends RuntimeException {
 
     public DuplicateEmailException() {

@@ -4,7 +4,7 @@ import com.portfolio.ikea.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 
-// 회원가입 성공 후 프론트로 보내는 값
+// 회원가입 응답 DTO
 @Getter
 @Builder
 public class SignupResponse {
@@ -15,6 +15,7 @@ public class SignupResponse {
     private String phone;
     private String message;
 
+    // 응답에는 비밀번호를 포함하지 않음
     public static SignupResponse from(User user) {
         return SignupResponse.builder()
                 .id(user.getId())

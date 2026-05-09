@@ -1,10 +1,12 @@
 //회원가입 페이지
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
 
 function SignupPage() {
+  const navigate = useNavigate();
   // 회원가입 입력값 저장
   const [form, setForm] = useState({
     name: "",
@@ -55,14 +57,11 @@ function SignupPage() {
         return;
       }
 
-      setMessage(data.message ?? "회원가입이 완료되었습니다.");
-      setForm({
-        name: "",
-        email: "",
-        password: "",
-        passwordConfirm: "",
-        phone: "",
-        termsAgreed: false,
+      navigate("/signup/welcome", {
+        state: {
+          name: data.name ?? form.name,
+          email: data.email ?? form.email,
+        },
       });
     } catch {
       setMessage("서버 연결을 확인해주세요.");
@@ -201,4 +200,3 @@ function SignupPage() {
 }
 
 export default SignupPage;
-

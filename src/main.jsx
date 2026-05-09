@@ -9,10 +9,10 @@ import Cart_Redux from "./data/Cart_Redux.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={Cart_Redux}>
+      {/* basename={import.meta.env.BASE_URL}  -->  Vite 전용 변수 모든 라우터 기능을 사용할때 vite 설정 변수 붙음*/}
       <BrowserRouter basename={import.meta.env.BASE_URL}>
         <App />
       </BrowserRouter>
     </Provider>
-  </StrictMode>
+  </StrictMode>,
 );
-  

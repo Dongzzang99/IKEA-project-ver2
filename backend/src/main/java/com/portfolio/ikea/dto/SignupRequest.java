@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 회원가입 화면에서 백엔드로 보내는 값
+// 회원가입 요청 DTO
 @Getter
 @NoArgsConstructor
 public class SignupRequest {

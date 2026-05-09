@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 회원 정보를 DB에 저장할 때 쓰는 클래스
+// 회원 테이블 매핑 엔티티
 @Getter
 @Entity
 @Table(name = "users")
@@ -31,6 +31,7 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    // BCrypt로 암호화된 비밀번호
     @Column(nullable = false)
     private String password;
 
@@ -51,7 +52,7 @@ public class User {
         this.phone = phone;
     }
 
-    // 처음 저장될 때 가입일과 수정일을 넣어줌
+    // 최초 저장 시 생성/수정 시간을 함께 기록
     @PrePersist
     public void prePersist() {
         LocalDateTime now = LocalDateTime.now();
@@ -59,7 +60,7 @@ public class User {
         this.updatedAt = now;
     }
 
-    // 나중에 회원 정보가 바뀌면 수정일만 새로 바꿈
+    // 수정 시 updatedAt 갱신
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();

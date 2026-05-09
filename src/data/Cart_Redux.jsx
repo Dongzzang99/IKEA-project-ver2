@@ -1,10 +1,24 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
+const loadCartItems = () => {
+  try {
+    const savedItems = localStorage.getItem("guestCartItems");
+
+    return savedItems ? JSON.parse(savedItems) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveCartItems = (items) => {
+  localStorage.setItem("guestCartItems", JSON.stringify(items));
+};
+
 // 장바구니 slice
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    items: [], // [{ id, title, price, image, note, quantity }, ...]
+    items: loadCartItems(), // [{ id, title, price, image, note, quantity }, ...]
   },
   reducers: {
     addToCart: (state, action) => {
@@ -18,6 +32,7 @@ const cartSlice = createSlice({
         // 처음 추가하는 상품이면 push
         state.items.push(newItem);
       }
+      saveCartItems(state.items);
     },
     //수량 변경
     updateQuantity: (state, action) => {
@@ -26,14 +41,17 @@ const cartSlice = createSlice({
       if (target) {
         target.quantity = quantity;
       }
+      saveCartItems(state.items);
     },
     //삭제
     removeFromCart: (state, action) => {
       const id = action.payload;
       state.items = state.items.filter((item) => item.id !== id);
+      saveCartItems(state.items);
     },
     clearCart: (state) => {
       state.items = [];
+      saveCartItems(state.items);
     },
   },
 });

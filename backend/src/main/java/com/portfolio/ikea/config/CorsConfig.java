@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-// 프론트 서버에서 백엔드 API를 부를 수 있게 허용
+// React 개발 서버에서 백엔드 API 호출을 허용
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 

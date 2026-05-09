@@ -1,12 +1,26 @@
-import productList from "../../data/productList";
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getProducts } from "../../api/products";
 
 function CategoryProductList({ category, isOpen }) {
-  //category 값 확인후 알맞은 리스트 띄우는 삼항 연산자
-  const filteredProducts =
-    category === "none"
-      ? []
-      : productList.filter((item) => item.category === category);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    if (category === "none") {
+      return;
+    }
+
+    getProducts(category)
+      .then((data) => {
+        setFilteredProducts(data);
+        setErrorMessage("");
+      })
+      .catch(() => {
+        setFilteredProducts([]);
+        setErrorMessage("상품을 불러오지 못했습니다.");
+      });
+  }, [category]);
 
   return (
     //슬라이드 애니메이션 div
@@ -24,6 +38,10 @@ function CategoryProductList({ category, isOpen }) {
     >
       <div className="overflow-x-auto">
         <div className="flex gap-3 w-max pb-4">
+          {errorMessage && (
+            <p className="text-sm font-bold text-gray-600">{errorMessage}</p>
+          )}
+
           {/* filteredProducts item - 10개 까지 화면 출력 */}
           {filteredProducts.slice(0, 10).map((item) => {
             const discountPrice = Math.floor(

@@ -1,19 +1,51 @@
 import { useParams, Link } from "react-router-dom";
-import productList from "../data/productList";
 
 import { useDispatch } from "react-redux";
 import { addToCart } from "../data/Cart_Redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getProduct } from "../api/products";
+import {
+  addCartItem,
+  hasAccessToken,
+} from "../api/cart";
+import { addRecentViewedProduct } from "../api/recentViewed";
 
 function ProductDetailPage() {
   const { id } = useParams();
-  const product = productList.find((item) => item.id === Number(id));
-  const discountPrice = Math.floor(product.price * (1 - product.sale / 100));
   const dispatch = useDispatch(); //redux - dispatch 사용
   const [quantity, setQuantity] = useState(1); //물건 수량  state
   const [isButtonActive, setIsButtonActive] = useState(false);
+  const [product, setProduct] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    getProduct(id)
+      .then((data) => {
+        setProduct(data);
+        addRecentViewedProduct(data);
+      })
+      .catch(() => {
+        setErrorMessage("상품을 찾을 수 없습니다.");
+      });
+  }, [id]);
 
   const handleAddToCart = () => {
+    if (!product) return;
+
+    if (hasAccessToken()) {
+      addCartItem({ productId: product.id, quantity })
+        .then(() => {
+          setIsButtonActive(true);
+          setTimeout(() => {
+            setIsButtonActive(false);
+          }, 1500);
+        })
+        .catch(() => {
+          alert("장바구니 담기에 실패했습니다.");
+        });
+      return;
+    }
+
     dispatch(
       addToCart({
         id: product.id,
@@ -30,9 +62,15 @@ function ProductDetailPage() {
     }, 1500);
   };
 
-  if (!product) {
-    return <div className="p-4">상품을 찾을 수 없습니다.</div>;
+  if (errorMessage) {
+    return <div className="p-4">{errorMessage}</div>;
   }
+
+  if (!product) {
+    return <div className="p-4">상품 정보를 불러오는 중입니다.</div>;
+  }
+
+  const discountPrice = Math.floor(product.price * (1 - product.sale / 100));
 
   return (
     <div className="p-4 relative">

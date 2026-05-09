@@ -12,15 +12,20 @@ import { MenuNavbar, CategoryProductList } from "./components/menu";
 import { HomePage, BusanApi, LoginPage, SignupPage } from "./pages";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import Cart from "./pages/Cart";
+import OrderPage from "./pages/OrderPage";
+import ProfilePage from "./pages/ProfilePage";
+import OrderListPage from "./pages/OrderListPage";
+import AccountPage from "./pages/AccountPage";
+import SignupWelcomePage from "./pages/SignupWelcomePage";
 
 import { Route, Routes, useLocation } from "react-router-dom";
 
-function ScrollToTop(){
-  const {pathname} = useLocation();
+function ScrollToTop() {
+  const { pathname } = useLocation();
 
-  useEffect(()=>{
-    window.scrollTo({top:0, left:0, behavior:"auto"});
-  },[pathname]);
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
 
   return null;
 }
@@ -46,7 +51,6 @@ function App() {
   };
 
   //  라우터가 바뀔 때마다 카테고리 리스트 닫기
-
   useEffect(() => {
     setSelectedCategory("none");
     setIsOpen(false);
@@ -66,14 +70,19 @@ function App() {
             {/* 가구 카테고리 카드2 - 카테고리 카드 누르면 나오는 리스트 */}
             <CategoryProductList category={selectedCategory} isOpen={isOpen} />
           </div>
-          <ScrollToTop/>
+          <ScrollToTop />
           <Routes>
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/ebusan" element={<BusanApi/>} />
+            <Route path="/order" element={<OrderPage />} />
+            <Route path="/mypage/profile" element={<ProfilePage />} />
+            <Route path="/mypage/orders" element={<OrderListPage />} />
+            <Route path="/mypage/account" element={<AccountPage />} />
+            <Route path="/ebusan" element={<BusanApi />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/signup/welcome" element={<SignupWelcomePage />} />
           </Routes>
         </MainLayout>
       </div>
