@@ -1,3 +1,4 @@
+// 로그인 요청 DTO 파일
 package com.portfolio.ikea.dto;
 
 import jakarta.validation.constraints.Email;

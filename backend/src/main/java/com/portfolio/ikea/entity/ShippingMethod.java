@@ -1,3 +1,4 @@
+// 배송방법과 배송비를 관리하는 enum 파일
 package com.portfolio.ikea.entity;
 
 import com.portfolio.ikea.exception.InvalidShippingMethodException;

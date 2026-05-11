@@ -1,3 +1,4 @@
+// 로그인 응답 DTO 파일
 package com.portfolio.ikea.dto;
 
 import com.portfolio.ikea.entity.User;
@@ -13,6 +14,7 @@ public class LoginResponse {
     private String name;
     private String email;
     private String phone;
+    private String role;
     private String tokenType;
     private String accessToken;
     private String message;
@@ -24,6 +26,7 @@ public class LoginResponse {
                 .name(user.getName())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .role(user.getRole().name())
                 .tokenType("Bearer")
                 .accessToken(accessToken)
                 .message("로그인에 성공했습니다.")

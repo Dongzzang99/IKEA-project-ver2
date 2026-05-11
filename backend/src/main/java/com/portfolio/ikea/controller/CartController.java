@@ -1,3 +1,4 @@
+// 장바구니 API 컨트롤러 파일
 package com.portfolio.ikea.controller;
 
 import com.portfolio.ikea.config.JwtTokenProvider;
@@ -69,6 +70,7 @@ public class CartController {
     }
 
     private Long getUserId(String authorization) {
+        // JWT에서 userId를 꺼내서 누구의 장바구니인지 구분함
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             throw new AuthenticationRequiredException();
         }

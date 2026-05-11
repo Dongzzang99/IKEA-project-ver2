@@ -1,3 +1,4 @@
+// 주문 응답 DTO 파일
 package com.portfolio.ikea.dto;
 
 import com.portfolio.ikea.entity.CustomerOrder;

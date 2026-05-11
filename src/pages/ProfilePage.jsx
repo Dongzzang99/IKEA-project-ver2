@@ -1,4 +1,4 @@
-//회원 정보 페이지
+// 회원 정보 페이지 파일
 import { Link, Navigate } from "react-router-dom";
 
 const getLoginUser = () => {

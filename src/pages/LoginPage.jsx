@@ -1,4 +1,4 @@
-//로그인페이지
+// 로그인 페이지 파일
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -17,6 +17,7 @@ function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 입력창 값 바뀔 때마다 form에 저장
+  // input name과 form key를 맞춰 여러 입력값 관리
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
 
@@ -52,6 +53,7 @@ function LoginPage() {
       }
 
       // 로그인 성공한 회원 정보와 JWT를 브라우저에 저장
+      // JWT 저장 후 장바구니/주문/관리자 API 로그인 증명에 사용
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem(
         "loginUser",
@@ -60,6 +62,7 @@ function LoginPage() {
           name: data.name,
           email: data.email,
           phone: data.phone,
+          role: data.role,
         }),
       );
       window.dispatchEvent(new Event("loginUserChanged"));

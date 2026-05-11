@@ -1,7 +1,8 @@
-//주문 목록 페이지
+// 주문 목록 페이지 파일
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { getOrders } from "../api/orders";
+import { getImagePath } from "../utils/imagePath";
 
 function OrderListPage() {
   const [orders, setOrders] = useState([]);
@@ -81,12 +82,10 @@ function OrderListPage() {
                     className="grid grid-cols-[72px_1fr_auto] items-center gap-4"
                   >
                     <img
-                      src={`${import.meta.env.BASE_URL}${item.image.replace(
-                        /^\//,
-                        "",
-                      )}`}
+                      src={getImagePath(item.image)}
                       alt={item.productTitle}
                       className="h-[72px] w-[72px] rounded object-cover"
+                      loading="lazy"
                     />
                     <div className="min-w-0">
                       <p className="truncate font-bold">{item.productTitle}</p>

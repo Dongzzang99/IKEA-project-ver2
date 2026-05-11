@@ -1,4 +1,4 @@
-//회원가입 환영 페이지
+// 회원가입 환영 페이지 파일
 import { Link, useLocation } from "react-router-dom";
 
 function SignupWelcomePage() {

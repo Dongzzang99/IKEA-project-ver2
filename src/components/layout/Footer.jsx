@@ -1,3 +1,4 @@
+// 하단 푸터 컴포넌트 파일
 function Footer() {
   return (
     <footer className="Footer">

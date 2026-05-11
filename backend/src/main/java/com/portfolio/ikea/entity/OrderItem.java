@@ -1,3 +1,4 @@
+// 주문 당시 상품 정보를 저장하는 주문상품 엔티티 파일
 package com.portfolio.ikea.entity;
 
 import jakarta.persistence.Column;

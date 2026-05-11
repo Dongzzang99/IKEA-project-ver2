@@ -1,4 +1,4 @@
-//회원가입 페이지
+// 회원가입 페이지 파일
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -20,6 +20,7 @@ function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 입력창 값 바뀔 때마다 form에 저장
+  // input name과 form key를 맞춰 회원가입 입력값 관리
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
 
@@ -34,6 +35,7 @@ function SignupPage() {
     event.preventDefault();
     setMessage("");
 
+    // 서버 요청 전 비밀번호 확인 검사
     if (form.password !== form.passwordConfirm) {
       setMessage("비밀번호가 일치하지 않습니다.");
       return;
@@ -57,6 +59,7 @@ function SignupPage() {
         return;
       }
 
+      // 회원가입 성공 후 환영 화면 이동
       navigate("/signup/welcome", {
         state: {
           name: data.name ?? form.name,

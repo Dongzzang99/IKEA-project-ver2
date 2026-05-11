@@ -1,8 +1,9 @@
-//주문 페이지
+// 주문 페이지 파일
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getCartItems, hasAccessToken } from "../api/cart";
 import { createOrder } from "../api/orders";
+import { getImagePath } from "../utils/imagePath";
 
 const shippingOptions = [
   {
@@ -59,6 +60,7 @@ function OrderPage() {
   const [completedOrder, setCompletedOrder] = useState(null);
 
   useEffect(() => {
+    // 토큰 없을 시 로그인 페이지로 이동
     if (!hasAccessToken()) {
       alert("주문은 로그인 후 이용할 수 있습니다.");
       navigate("/login");
@@ -83,6 +85,7 @@ function OrderPage() {
       });
   }, [navigate]);
 
+  // 배송 방법 변경 시 선택 배송 정보 재계산
   const selectedShipping = useMemo(
     () => shippingOptions.find((option) => option.value === shippingMethod),
     [shippingMethod],
@@ -103,6 +106,7 @@ function OrderPage() {
   };
 
   const completeShipping = () => {
+    // 배송 방법 완료 후 상세 정보 단계 이동
     setCompletedSteps({
       shipping: true,
       deliveryInfo: false,
@@ -112,6 +116,7 @@ function OrderPage() {
   };
 
   const completeDeliveryInfo = () => {
+    // 주문 생성 전 필수 배송 정보 입력 확인
     if (
       !deliveryInfo.email ||
       !deliveryInfo.phone ||
@@ -133,14 +138,17 @@ function OrderPage() {
   };
 
   const completePayment = () => {
+    // 결제 연동 전 임시 결제 완료 상태 저장
     setCompletedSteps((prev) => ({ ...prev, payment: true }));
   };
 
   const handleCreateOrder = async () => {
+    // 주문하기 클릭 시 DB 장바구니 기준 주문 생성
     setMessage("");
     setIsOrdering(true);
 
     try {
+      // 결제 연동 전 단계라 지금은 주문 생성 API까지만 호출함
       const order = await createOrder({
         shippingMethod,
         email: deliveryInfo.email,
@@ -371,12 +379,10 @@ function OrderPage() {
           {cartItems.map((item) => (
             <div key={item.id} className="grid grid-cols-[72px_1fr] gap-3">
               <img
-                src={`${import.meta.env.BASE_URL}${item.image.replace(
-                  /^\//,
-                  "",
-                )}`}
+                src={getImagePath(item.image)}
                 alt={item.title}
                 className="h-[72px] w-[72px] rounded object-cover"
+                loading="lazy"
               />
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold">{item.title}</p>

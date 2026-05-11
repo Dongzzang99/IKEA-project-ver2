@@ -1,3 +1,4 @@
+// 게스트 장바구니 상태를 관리하던 Redux 파일
 import { configureStore, createSlice } from "@reduxjs/toolkit";
 
 const loadCartItems = () => {

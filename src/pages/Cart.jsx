@@ -1,4 +1,4 @@
-//장바구니 페이지
+// 장바구니 페이지 파일
 import { useSelector, useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import {
   removeCartItem,
   updateCartItem,
 } from "../api/cart";
+import { getImagePath } from "../utils/imagePath";
 
 function Cart() {
   const items = useSelector((state) => state.cart.items);
@@ -22,6 +23,7 @@ function Cart() {
   const cartItems = isLoggedIn ? localItems : items;
 
   useEffect(() => {
+    // 로그인 사용자 DB 장바구니 조회
     if (!isLoggedIn) {
       return;
     }
@@ -51,6 +53,7 @@ function Cart() {
   );
 
   const changeLocalQuantity = (id, delta) => {
+    // 화면 수량 먼저 변경 후 결제 직전 DB 수량 동기화
     if (!isLoggedIn) {
       const target = items.find((item) => item.id === id);
 
@@ -75,6 +78,7 @@ function Cart() {
   };
 
   const handleRemoveItem = (id) => {
+    // 로그인 장바구니 상품 DB 삭제 후 화면에서도 제거
     if (!isLoggedIn) {
       dispatch(removeFromCart(id));
       return;
@@ -90,12 +94,14 @@ function Cart() {
   };
 
   const handleCheckout = () => {
+    // 주문 페이지 이동 전 화면 수량을 서버 장바구니에 반영
     if (!isLoggedIn) {
       alert("주문은 로그인 후 이용할 수 있습니다.");
       return;
     }
 
     Promise.all(
+      // 주문 페이지로 가기 전에 화면에서 바꾼 수량을 DB에 먼저 반영함
       localItems.map((item) =>
         updateCartItem({
           productId: item.id,
@@ -132,8 +138,9 @@ function Cart() {
         <div>
           <img
             className="w-[300px]"
-            src={`${import.meta.env.BASE_URL}img/ikea-bag.png`}
+            src={getImagePath("img/ikea-bag.png")}
             alt="IKEA bag"
+            loading="lazy"
           />
         </div>
       </div>
@@ -160,12 +167,10 @@ function Cart() {
             className="mb-4 flex items-center gap-4 border-b border-gray-200 pb-4"
           >
             <img
-              src={`${import.meta.env.BASE_URL}${item.image.replace(
-                /^\//,
-                "",
-              )}`}
+              src={getImagePath(item.image)}
               alt={item.title}
               className="h-24 w-24 rounded object-cover"
+              loading="lazy"
             />
 
             <div className="flex-1">

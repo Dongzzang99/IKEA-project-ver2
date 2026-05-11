@@ -1,3 +1,4 @@
+// React 앱을 브라우저에 연결하는 시작 파일
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css"; //./ 부터 시작하는건 사용자가 생성

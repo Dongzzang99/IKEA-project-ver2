@@ -1,3 +1,4 @@
+// 상품 조회 응답 DTO 파일
 package com.portfolio.ikea.dto;
 
 import com.portfolio.ikea.entity.Product;

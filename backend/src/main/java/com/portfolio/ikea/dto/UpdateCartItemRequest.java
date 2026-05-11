@@ -1,3 +1,4 @@
+// 장바구니 수량 변경 요청 DTO 파일
 package com.portfolio.ikea.dto;
 
 import jakarta.validation.constraints.Min;

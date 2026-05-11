@@ -1,3 +1,4 @@
+// 최근 본 상품을 localStorage에 저장하는 파일
 const RECENT_VIEWED_KEY = "recentViewedProducts";
 const MAX_RECENT_VIEWED_COUNT = 10;
 

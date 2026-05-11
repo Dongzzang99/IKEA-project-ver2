@@ -1,26 +1,25 @@
-import { useParams, Link } from "react-router-dom";
-
-import { useDispatch } from "react-redux";
-import { addToCart } from "../data/Cart_Redux";
+// 상품 상세 페이지 파일
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { addCartItem, hasAccessToken } from "../api/cart";
 import { getProduct } from "../api/products";
-import {
-  addCartItem,
-  hasAccessToken,
-} from "../api/cart";
 import { addRecentViewedProduct } from "../api/recentViewed";
+import { getImagePath } from "../utils/imagePath";
 
 function ProductDetailPage() {
   const { id } = useParams();
-  const dispatch = useDispatch(); //redux - dispatch 사용
-  const [quantity, setQuantity] = useState(1); //물건 수량  state
+  const navigate = useNavigate();
+  const [quantity, setQuantity] = useState(1);
   const [isButtonActive, setIsButtonActive] = useState(false);
   const [product, setProduct] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    // 상세 페이지 id 변경 시 상품 재조회 + 수량 1개 초기화
     getProduct(id)
       .then((data) => {
+        setQuantity(1);
+        setIsButtonActive(false);
         setProduct(data);
         addRecentViewedProduct(data);
       })
@@ -32,34 +31,32 @@ function ProductDetailPage() {
   const handleAddToCart = () => {
     if (!product) return;
 
-    if (hasAccessToken()) {
-      addCartItem({ productId: product.id, quantity })
-        .then(() => {
-          setIsButtonActive(true);
-          setTimeout(() => {
-            setIsButtonActive(false);
-          }, 1500);
-        })
-        .catch(() => {
-          alert("장바구니 담기에 실패했습니다.");
-        });
+    if (!hasAccessToken()) {
+      // DB 장바구니를 쓰기로 해서 비로그인 장바구니는 막아둠
+      alert("로그인후 이용해 주세요!");
       return;
     }
 
-    dispatch(
-      addToCart({
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        image: product.image,
-        note: product.note,
-        quantity,
+    addCartItem({ productId: product.id, quantity })
+      .then(() => {
+        setIsButtonActive(true);
+        setTimeout(() => {
+          setIsButtonActive(false);
+        }, 1500);
       })
-    );
-    setIsButtonActive(true);
-    setTimeout(() => {
-      setIsButtonActive(false);
-    }, 1500);
+      .catch(() => {
+        alert("장바구니 담기에 실패했습니다.");
+      });
+  };
+
+  const handleMoveToCart = () => {
+    // DB 장바구니 사용을 위해 로그인 사용자만 이동 가능
+    if (!hasAccessToken()) {
+      alert("로그인후 이용해 주세요!");
+      return;
+    }
+
+    navigate("/cart");
   };
 
   if (errorMessage) {
@@ -70,36 +67,35 @@ function ProductDetailPage() {
     return <div className="p-4">상품 정보를 불러오는 중입니다.</div>;
   }
 
+  // 원가와 할인율 기준 최종 가격 계산
   const discountPrice = Math.floor(product.price * (1 - product.sale / 100));
 
   return (
-    <div className="p-4 relative">
-      <div className="flex flex-col md:flex-row justify-center gap-6 md:gap-32">
-        {/* 왼쪽 이미지 */}
+    <div className="relative p-4">
+      <div className="flex flex-col justify-center gap-6 md:flex-row md:gap-32">
         <img
-          src={`${import.meta.env.BASE_URL}${product.image.replace(/^\//, "")}`}
+          src={getImagePath(product.image)}
           alt={product.title}
-          className="w-[40rem] h-auto object-contain rounded-lg"
+          className="h-auto w-[40rem] rounded-lg object-contain"
         />
-        {/* 오른쪽 상품 제목 및 가격 */}
+
         <div className="flex flex-col justify-start gap-2">
           <div>
-            <p className="font-bold text-lg">{product.title}</p>
+            <p className="text-lg font-bold">{product.title}</p>
             <p className="text-sm text-gray-600">{product.note}</p>
           </div>
 
-          <p className="font-bold text-2xl">
-            <span className="relative top-[-0.3em] text-base">￦</span>
+          <p className="text-2xl font-bold">
+            <span className="relative top-[-0.3em] text-base">₩</span>
             {discountPrice.toLocaleString()}
           </p>
 
-          <p className="text-sm text-gray-500 mb-16">
-            기존가: <span>￦{product.price.toLocaleString()}</span>
+          <p className="mb-16 text-sm text-gray-500">
+            기존가: <span>₩{product.price.toLocaleString()}</span>
           </p>
 
-          {/* 구매 div */}
           <p className="font-bold">어떻게 구매하시겠어요?</p>
-          <div className="border border-gray-300 w-full md:w-[500px] h-[150px] rounded-xl p-3 flex flex-col justify-center mb-4">
+          <div className="mb-4 flex h-[150px] w-full flex-col justify-center rounded-xl border border-gray-300 p-3 md:w-[500px]">
             <div className="border-b border-gray-300 p-3">
               <div className="flex gap-2">
                 <div>
@@ -118,46 +114,43 @@ function ProductDetailPage() {
                 </div>
                 <div>
                   <p className="font-bold">매장 구매</p>
-                  <p className="text-gray-500">매장 재고 및 재입고 날짜 확인</p>
+                  <p className="text-gray-500">매장 재고 및 입고 날짜 확인</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* 갯수 선택 및 장바구니 담기 버튼 */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
-            {/* 수량 선택 박스 */}
-            <div className="flex items-center justify-between w-full sm:w-[120px] h-[40px] border border-gray-300 rounded-full px-4">
+          <div className="flex w-full flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+            <div className="flex h-[40px] w-full items-center justify-between rounded-full border border-gray-300 px-4 sm:w-[120px]">
               <button
-                className="text-xl font-bold cursor-pointer"
+                className="cursor-pointer text-xl font-bold"
                 onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
               >
-                −
+                -
               </button>
               <span className="text-lg font-medium">{quantity}</span>
               <button
-                className="text-xl font-bold cursor-pointer"
+                className="cursor-pointer text-xl font-bold"
                 onClick={() => setQuantity((prev) => prev + 1)}
               >
-                ＋
+                +
               </button>
             </div>
 
-            {/* 장바구니 담기 버튼 */}
             <button
-              className="w-full sm:flex-1 h-[40px] rounded-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-bold flex items-center justify-center transition"
+              className="flex h-[40px] w-full cursor-pointer items-center justify-center rounded-full bg-blue-600 font-bold text-white transition hover:bg-blue-700 sm:flex-1"
               onClick={handleAddToCart}
             >
-              {isButtonActive ? "✓ 장바구니에 담겼습니다!" : "장바구니에 담기"}
+              {isButtonActive ? "장바구니에 담겼습니다" : "장바구니에 담기"}
             </button>
 
-            {/* 장바구니로 이동 */}
-            <Link
-              to="/cart"
-              className="w-full sm:flex-1 h-[40px] rounded-full bg-blue-600 hover:bg-blue-700 cursor-pointer text-white font-bold flex items-center justify-center transition"
+            <button
+              type="button"
+              className="flex h-[40px] w-full cursor-pointer items-center justify-center rounded-full bg-blue-600 font-bold text-white transition hover:bg-blue-700 sm:flex-1"
+              onClick={handleMoveToCart}
             >
               장바구니로 이동하기
-            </Link>
+            </button>
           </div>
         </div>
       </div>

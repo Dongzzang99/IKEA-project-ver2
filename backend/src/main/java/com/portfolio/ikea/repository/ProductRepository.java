@@ -1,3 +1,4 @@
+// 상품 DB 접근 Repository 파일
 package com.portfolio.ikea.repository;
 
 import com.portfolio.ikea.entity.Product;

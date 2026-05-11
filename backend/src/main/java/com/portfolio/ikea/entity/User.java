@@ -1,7 +1,10 @@
+// 회원 테이블과 매핑되는 엔티티 파일
 package com.portfolio.ikea.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,6 +41,10 @@ public class User {
     @Column(length = 20)
     private String phone;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserRole role;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -45,11 +52,12 @@ public class User {
     private LocalDateTime updatedAt;
 
     @Builder
-    public User(String name, String email, String password, String phone) {
+    public User(String name, String email, String password, String phone, UserRole role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
+        this.role = role;
     }
 
     // 최초 저장 시 생성/수정 시간을 함께 기록

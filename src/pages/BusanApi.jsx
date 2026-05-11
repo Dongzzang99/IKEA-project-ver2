@@ -1,4 +1,4 @@
-//이케아 동부산점 안내 페이지
+// 이케아 동부산점 안내 페이지 파일
 import { useEffect, useRef } from "react";
 
 export default function BusanApi() {

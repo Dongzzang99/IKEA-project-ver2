@@ -1,4 +1,6 @@
+// 홈 페이지 파일
 import HomePage_SpecialPrice from "./HomePage_SpecialPrice";
+import { getImagePath } from "../utils/imagePath";
 
 function HomePage() {
   return (
@@ -48,7 +50,7 @@ function HomePage_Main() {
             className="relative block w-full aspect-square md:aspect-auto md:h-full"
           >
             <img
-              src={`${import.meta.env.BASE_URL}img/event_img/event_img1.jpg`}
+              src={getImagePath("img/event_img/event_img1.jpg")}
               className="h-full w-full object-cover"
               alt=""
             />
@@ -77,9 +79,10 @@ function HomePage_Main() {
             className="relative block w-full aspect-square md:aspect-auto md:h-[49%]"
           >
             <img
-              src={`${import.meta.env.BASE_URL}img/event_img/event_img2.jpg`}
+              src={getImagePath("img/event_img/event_img2.jpg")}
               className="h-full w-full object-cover"
               alt=""
+              loading="lazy"
             />
 
             {/* 2번카드 그라데이션 */}

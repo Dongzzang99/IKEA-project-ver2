@@ -1,3 +1,4 @@
+// JWT 발급과 검증을 담당하는 파일
 package com.portfolio.ikea.config;
 
 import com.portfolio.ikea.entity.User;
@@ -35,6 +36,7 @@ public class JwtTokenProvider {
                 .subject(String.valueOf(user.getId()))
                 .claim("email", user.getEmail())
                 .claim("name", user.getName())
+                .claim("role", user.getRole().name())
                 .issuedAt(now)
                 .expiration(expiration)
                 .signWith(secretKey)
@@ -42,6 +44,7 @@ public class JwtTokenProvider {
     }
 
     public Long getUserId(String token) {
+        // 토큰이 잘못되면 바로 로그인 필요 예외로 처리함
         try {
             Claims claims = Jwts.parser()
                     .verifyWith(secretKey)

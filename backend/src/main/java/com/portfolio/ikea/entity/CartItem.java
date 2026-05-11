@@ -1,3 +1,4 @@
+// 회원별 장바구니 상품을 저장하는 엔티티 파일
 package com.portfolio.ikea.entity;
 
 import jakarta.persistence.Column;

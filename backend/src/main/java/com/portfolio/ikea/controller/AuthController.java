@@ -1,3 +1,4 @@
+// 회원가입과 로그인 API 컨트롤러 파일
 package com.portfolio.ikea.controller;
 
 import com.portfolio.ikea.dto.LoginRequest;

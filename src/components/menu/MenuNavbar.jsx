@@ -1,4 +1,7 @@
 //가구 종류 카드 나열 리스트
+// 카테고리 메뉴 카드 목록 파일
+import { getImagePath } from "../../utils/imagePath";
+
 const item_list = [
   { id: 1, title: "신상품과 컬렉션", image: "img/menu_card/card1.jpg" },
   { id: 2, title: "수납 가구", image: "img/menu_card/card2.jpg" },
@@ -48,8 +51,9 @@ function MenuNavbar({ onSelectCategory }) {
             }}
           >
             <img
-              src={`${import.meta.env.BASE_URL}${item.image}`}
+              src={getImagePath(item.image)}
               alt={item.title}
+              loading="lazy"
             />
             <p>{item.title}</p>
           </div>

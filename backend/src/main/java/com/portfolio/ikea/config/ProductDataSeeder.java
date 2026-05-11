@@ -1,3 +1,4 @@
+// 개발용 초기 상품 데이터를 넣어주는 파일
 package com.portfolio.ikea.config;
 
 import com.portfolio.ikea.entity.Product;

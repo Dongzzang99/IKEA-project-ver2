@@ -1,3 +1,4 @@
+// 주문 생성과 주문 조회 비즈니스 로직 파일
 package com.portfolio.ikea.service;
 
 import com.portfolio.ikea.dto.CreateOrderRequest;
@@ -49,6 +50,7 @@ public class OrderService {
         int productTotalPrice = cartItems.stream()
                 .mapToInt(item -> item.getProduct().getPrice() * item.getQuantity())
                 .sum();
+        // 주문 금액은 프론트가 보낸 값이 아니라 DB 상품 가격 기준으로 다시 계산함
         ShippingMethod shippingMethod = ShippingMethod.from(request.getShippingMethod());
         CustomerOrder order = new CustomerOrder(
                 user,

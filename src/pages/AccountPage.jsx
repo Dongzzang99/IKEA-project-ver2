@@ -1,4 +1,4 @@
-//계정 페이지
+// 계정 페이지 파일
 import { Navigate } from "react-router-dom";
 
 function AccountPage() {

@@ -1,3 +1,4 @@
+// 상단 안내 헤더 컴포넌트 파일
 function ContainerHeader() {
   return (
     <div className="bg-black h-12 w-full text-white px-3 sm:px-4 md:px-8 lg:px-12 flex items-center justify-between">

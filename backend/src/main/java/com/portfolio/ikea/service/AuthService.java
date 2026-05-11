@@ -1,3 +1,4 @@
+// 회원가입과 로그인 비즈니스 로직 파일
 package com.portfolio.ikea.service;
 
 import com.portfolio.ikea.config.JwtTokenProvider;
@@ -6,6 +7,7 @@ import com.portfolio.ikea.dto.LoginResponse;
 import com.portfolio.ikea.dto.SignupRequest;
 import com.portfolio.ikea.dto.SignupResponse;
 import com.portfolio.ikea.entity.User;
+import com.portfolio.ikea.entity.UserRole;
 import com.portfolio.ikea.exception.DuplicateEmailException;
 import com.portfolio.ikea.exception.InvalidLoginException;
 import com.portfolio.ikea.exception.PasswordMismatchException;
@@ -41,6 +43,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone(request.getPhone())
+                .role(UserRole.USER)
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -59,6 +62,7 @@ public class AuthService {
         }
 
         // 로그인 성공 시 프론트가 이후 요청에 사용할 JWT 발급
+        // 로그인에 성공하면 이후 요청에서 사용할 JWT를 발급함
         String accessToken = jwtTokenProvider.createAccessToken(user);
 
         return LoginResponse.from(user, accessToken);

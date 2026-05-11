@@ -1,3 +1,4 @@
+// 주문 한 건의 배송정보와 결제금액을 저장하는 엔티티 파일
 package com.portfolio.ikea.entity;
 
 import jakarta.persistence.CascadeType;
@@ -97,6 +98,7 @@ public class CustomerOrder {
     }
 
     public void addOrderItem(OrderItem orderItem) {
+        // 주문과 주문상품은 같이 저장되어야 해서 여기서 연관관계를 맞춰줌
         orderItems.add(orderItem);
         orderItem.setOrder(this);
     }

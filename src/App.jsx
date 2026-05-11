@@ -1,4 +1,4 @@
-// src/App.jsx
+// 전체 라우터와 공통 레이아웃을 관리하는 파일
 import { useState, useEffect } from "react";
 import "./App.css";
 
@@ -17,6 +17,7 @@ import ProfilePage from "./pages/ProfilePage";
 import OrderListPage from "./pages/OrderListPage";
 import AccountPage from "./pages/AccountPage";
 import SignupWelcomePage from "./pages/SignupWelcomePage";
+import AdminPage from "./pages/AdminPage";
 
 import { Route, Routes, useLocation } from "react-router-dom";
 
@@ -79,6 +80,7 @@ function App() {
             <Route path="/mypage/profile" element={<ProfilePage />} />
             <Route path="/mypage/orders" element={<OrderListPage />} />
             <Route path="/mypage/account" element={<AccountPage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="/ebusan" element={<BusanApi />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />

@@ -1,3 +1,4 @@
+// 상품 테이블과 매핑되는 엔티티 파일
 package com.portfolio.ikea.entity;
 
 import jakarta.persistence.Column;
@@ -43,6 +44,9 @@ public class Product {
     @Column(nullable = false)
     private double rating;
 
+    @Column(nullable = false, columnDefinition = "int default 100")
+    private int stock;
+
     @Builder
     public Product(
             Long id,
@@ -53,7 +57,8 @@ public class Product {
             String image,
             String note,
             String category,
-            double rating
+            double rating,
+            int stock
     ) {
         this.id = id;
         this.title = title;
@@ -64,5 +69,13 @@ public class Product {
         this.note = note;
         this.category = category;
         this.rating = rating;
+        this.stock = stock;
+    }
+
+    public void updateAdminFields(int price, int sale, int stock) {
+        // 관리자는 가격, 할인율, 재고처럼 운영에 필요한 값만 수정하게 제한함
+        this.price = price;
+        this.sale = sale;
+        this.stock = stock;
     }
 }

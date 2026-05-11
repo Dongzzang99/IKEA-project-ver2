@@ -1,3 +1,4 @@
+// 예외 응답을 한 곳에서 처리하는 파일
 package com.portfolio.ikea.exception;
 
 import java.util.Map;
@@ -35,6 +36,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", exception.getMessage()));
     }
 
+    @ExceptionHandler(AdminPermissionException.class)
+    public ResponseEntity<Map<String, String>> handleAdminPermission(AdminPermissionException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("message", exception.getMessage()));
+    }
+
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleProductNotFound(ProductNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -55,6 +62,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException exception) {
+        // Validation 실패 메시지 중 가장 먼저 나온 메시지를 프론트로 내려줌
         String message = exception.getBindingResult()
                 .getFieldErrors()
                 .stream()

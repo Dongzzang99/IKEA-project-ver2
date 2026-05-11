@@ -1,3 +1,4 @@
+// 장바구니 비즈니스 로직 파일
 package com.portfolio.ikea.service;
 
 import com.portfolio.ikea.dto.AddCartItemRequest;

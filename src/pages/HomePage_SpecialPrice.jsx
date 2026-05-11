@@ -1,6 +1,8 @@
+// 홈 화면 특가 상품 영역 파일
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getSpecialPriceProducts } from "../api/products";
+import { getImagePath } from "../utils/imagePath";
 
 function HomePage_SpecialPrice() {
   const [products, setProducts] = useState([]);
@@ -41,11 +43,10 @@ function HomePage_SpecialPrice() {
                   className="w-[180px] flex-shrink-0 block"
                 >
                   <img
-                    src={`${import.meta.env.BASE_URL}${item.image.replace(
-                      /^\//,
-                      ""
-                    )}`}
+                    src={getImagePath(item.image)}
                     className="pb-4 w-full h-[180px] object-cover"
+                    alt={item.title}
+                    loading="lazy"
                   />
 
                   <p className="text-red-500 font-bold pb-2 text-sm">

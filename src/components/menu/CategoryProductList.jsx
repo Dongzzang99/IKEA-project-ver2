@@ -1,6 +1,8 @@
+// 카테고리 선택 시 상품 리스트를 보여주는 파일
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProducts } from "../../api/products";
+import { getImagePath } from "../../utils/imagePath";
 
 function CategoryProductList({ category, isOpen }) {
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -55,9 +57,10 @@ function CategoryProductList({ category, isOpen }) {
                 className="w-[180px] flex-shrink-0 cursor-pointer"
               >
                 <img
-                  src={`${import.meta.env.BASE_URL}${item.image}`}
+                  src={getImagePath(item.image)}
                   alt={item.title}
                   className="pb-4 w-full h-[180px] object-cover"
+                  loading="lazy"
                 />
 
                 {/* 특가 상품 표시 간격은 벌린채로, sale값이 0 보다 크면 표시, 0이면 text-transparent(텍스트 투명)*/}
