@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import com.portfolio.ikea.exception.OutOfStockException;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -77,5 +78,13 @@ public class Product {
         this.price = price;
         this.sale = sale;
         this.stock = stock;
+    }
+
+    public void decreaseStock(int quantity) {
+        if (this.stock < quantity) {
+            throw new OutOfStockException(this.title, this.stock, quantity);
+        }
+
+        this.stock -= quantity;
     }
 }

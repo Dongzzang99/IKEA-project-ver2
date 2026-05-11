@@ -19,6 +19,7 @@ public class ProductResponse {
     private String note;
     private String category;
     private double rating;
+    private int stock;
 
     public static ProductResponse from(Product product) {
         return ProductResponse.builder()
@@ -31,6 +32,7 @@ public class ProductResponse {
                 .note(product.getNote())
                 .category(product.getCategory())
                 .rating(product.getRating())
+                .stock(product.getStock())
                 .build();
     }
 }

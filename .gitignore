@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 
+#.env 파일 git 추적 해제
 # Environment variables
 .env
 .env.*

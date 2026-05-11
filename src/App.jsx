@@ -1,5 +1,5 @@
-// 전체 라우터와 공통 레이아웃을 관리하는 파일
-import { useState, useEffect } from "react";
+// 전체 라우팅과 공통 레이아웃을 관리하는 파일
+import { useEffect, useState } from "react";
 import "./App.css";
 
 import {
@@ -32,48 +32,45 @@ function ScrollToTop() {
 }
 
 function App() {
-  // 카테고리 상태 + 열림 상태 추가
-  const [selectedCategory, setSelectedCategory] = useState("none");
-  const [isOpen, setIsOpen] = useState(false);
-
-  // 라우트 변경 감지 - url 주소가 바뀌는걸 감지
   const location = useLocation();
+  const [categoryMenu, setCategoryMenu] = useState({
+    selectedCategory: "none",
+    isOpen: false,
+    pathname: location.pathname,
+  });
 
-  //카테고리 버튼 토글
+  const isSamePage = categoryMenu.pathname === location.pathname;
+  const selectedCategory = isSamePage ? categoryMenu.selectedCategory : "none";
+  const isOpen = isSamePage ? categoryMenu.isOpen : false;
+
   const handleSelectCategory = (category) => {
-    // 같은 카테고리 다시 누르면 열림/닫힘 토글
-    if (category === selectedCategory) {
-      setIsOpen((prev) => !prev);
-    } else {
-      // 다른 카테고리 누르면 선택 변경 + 항상 열기
-      setSelectedCategory(category);
-      setIsOpen(true);
-    }
+    // 같은 페이지에서 같은 카테고리 클릭 시 열림/닫힘 토글
+    setCategoryMenu((prev) => {
+      const isSameCategory =
+        prev.pathname === location.pathname && prev.selectedCategory === category;
+
+      return {
+        selectedCategory: category,
+        isOpen: isSameCategory ? !prev.isOpen : true,
+        pathname: location.pathname,
+      };
+    });
   };
 
-  //  라우터가 바뀔 때마다 카테고리 리스트 닫기
-  useEffect(() => {
-    setSelectedCategory("none");
-    setIsOpen(false);
-  }, [location.pathname]);
-
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <ContainerHeader />
 
       <div className="flex-1">
         <MainLayout>
-          {/* 로고, 검색, 아이콘 컴포넌트 */}
           <ContainerNavbar />
           <div className="hidden lg:block">
-            {/* 가구 카테고리 카드1 */}
             <MenuNavbar onSelectCategory={handleSelectCategory} />
-            {/* 가구 카테고리 카드2 - 카테고리 카드 누르면 나오는 리스트 */}
             <CategoryProductList category={selectedCategory} isOpen={isOpen} />
           </div>
           <ScrollToTop />
           <Routes>
-            <Route path="/" element={<HomePage />}></Route>
+            <Route path="/" element={<HomePage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/order" element={<OrderPage />} />

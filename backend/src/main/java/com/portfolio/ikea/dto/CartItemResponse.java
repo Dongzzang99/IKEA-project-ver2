@@ -18,6 +18,7 @@ public class CartItemResponse {
     private String image;
     private String note;
     private int quantity;
+    private int stock;
 
     public static CartItemResponse from(CartItem cartItem) {
         Product product = cartItem.getProduct();
@@ -30,6 +31,7 @@ public class CartItemResponse {
                 .image(product.getImage())
                 .note(product.getNote())
                 .quantity(cartItem.getQuantity())
+                .stock(product.getStock())
                 .build();
     }
 }

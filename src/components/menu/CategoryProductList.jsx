@@ -83,6 +83,9 @@ function CategoryProductList({ category, isOpen }) {
                 <p className="text-[0.75rem] text-gray-500">
                   기존가: ￦{item.price.toLocaleString()}
                 </p>
+                <p className="mt-1 text-[0.75rem] font-bold text-gray-700">
+                  총 재고 {item.stock}개
+                </p>
               </Link>
             );
           })}

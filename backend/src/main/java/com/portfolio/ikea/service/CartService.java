@@ -7,6 +7,7 @@ import com.portfolio.ikea.dto.UpdateCartItemRequest;
 import com.portfolio.ikea.entity.CartItem;
 import com.portfolio.ikea.entity.Product;
 import com.portfolio.ikea.entity.User;
+import com.portfolio.ikea.exception.OutOfStockException;
 import com.portfolio.ikea.exception.ProductNotFoundException;
 import com.portfolio.ikea.repository.CartItemRepository;
 import com.portfolio.ikea.repository.ProductRepository;
@@ -43,10 +44,19 @@ public class CartService {
 
         CartItem cartItem = cartItemRepository.findByUserAndProduct(user, product)
                 .map(existingItem -> {
+                    int nextQuantity = existingItem.getQuantity() + request.getQuantity();
+                    if (product.getStock() < nextQuantity) {
+                        throw new OutOfStockException(product.getTitle(), product.getStock(), nextQuantity);
+                    }
                     existingItem.addQuantity(request.getQuantity());
                     return existingItem;
                 })
-                .orElseGet(() -> new CartItem(user, product, request.getQuantity()));
+                .orElseGet(() -> {
+                    if (product.getStock() < request.getQuantity()) {
+                        throw new OutOfStockException(product.getTitle(), product.getStock(), request.getQuantity());
+                    }
+                    return new CartItem(user, product, request.getQuantity());
+                });
 
         return CartItemResponse.from(cartItemRepository.save(cartItem));
     }
@@ -56,6 +66,11 @@ public class CartService {
         User user = getUser(userId);
         CartItem cartItem = cartItemRepository.findByUserAndProductId(user, productId)
                 .orElseThrow(ProductNotFoundException::new);
+        Product product = cartItem.getProduct();
+
+        if (product.getStock() < request.getQuantity()) {
+            throw new OutOfStockException(product.getTitle(), product.getStock(), request.getQuantity());
+        }
 
         cartItem.updateQuantity(request.getQuantity());
 

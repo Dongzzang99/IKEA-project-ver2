@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build --emptyOutDir=false",
     "lint": "eslint .",
     "optimize:images": "node scripts/convert-images-to-webp.mjs",
     "preview": "vite preview"

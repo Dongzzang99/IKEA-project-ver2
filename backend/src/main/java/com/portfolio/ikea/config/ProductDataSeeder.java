@@ -86,6 +86,7 @@ public class ProductDataSeeder implements CommandLineRunner {
                 .note(note)
                 .category(category)
                 .rating(rating)
+                .stock(100)
                 .build();
     }
 }

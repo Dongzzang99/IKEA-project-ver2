@@ -38,6 +38,7 @@ function Cart() {
             image: item.image,
             note: item.note,
             quantity: item.quantity,
+            stock: item.stock,
           })),
         );
         setErrorMessage("");
@@ -71,7 +72,13 @@ function Cart() {
     setLocalItems((prev) =>
       prev.map((item) =>
         item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+          ? {
+              ...item,
+              quantity: Math.min(
+                item.stock,
+                Math.max(1, item.quantity + delta),
+              ),
+            }
           : item,
       ),
     );
@@ -181,6 +188,9 @@ function Cart() {
                 {item.title}
               </Link>
               <p className="pb-2 text-sm text-gray-600">{item.note}</p>
+              <p className="pb-2 text-sm font-bold text-gray-700">
+                총 재고 {item.stock}개
+              </p>
 
               <div className="flex items-center gap-3">
                 <div className="flex h-[40px] w-[120px] items-center justify-between rounded-full border border-gray-300 px-4">

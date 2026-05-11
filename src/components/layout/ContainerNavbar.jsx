@@ -230,6 +230,9 @@ function SearchResultDropdown({ searchText, searchResults, onSelectProduct }) {
                 <p className="mt-1 text-sm font-bold text-gray-700">
                   {product.price.toLocaleString()}원
                 </p>
+                <p className="mt-1 text-xs font-bold text-gray-600">
+                  총 재고 {product.stock}개
+                </p>
               </div>
               <i className="fas fa-chevron-right text-xs text-gray-500"></i>
             </button>

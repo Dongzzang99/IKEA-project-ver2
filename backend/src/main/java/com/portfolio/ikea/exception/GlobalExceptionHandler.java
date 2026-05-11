@@ -54,6 +54,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", exception.getMessage()));
     }
 
+    @ExceptionHandler(OutOfStockException.class)
+    public ResponseEntity<Map<String, String>> handleOutOfStock(OutOfStockException exception) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(Map.of("message", exception.getMessage()));
+    }
+
     @ExceptionHandler(InvalidShippingMethodException.class)
     public ResponseEntity<Map<String, String>> handleInvalidShippingMethod(InvalidShippingMethodException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
