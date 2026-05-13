@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+// 관리자 권한으로 주문, 회원, 상품 관리 데이터 요청 처리
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 public class AdminController {
@@ -27,17 +28,19 @@ public class AdminController {
     private final AdminService adminService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // 모든 사용자의 주문 목록을 관리자 화면에 전달
     @GetMapping("/orders")
     public List<OrderResponse> getAllOrders(@RequestHeader("Authorization") String authorization) {
-        // 관리자 API는 프론트에서 메뉴를 숨기는 것만으로 부족해서 서버에서도 권한을 확인함
         return adminService.getAllOrders(getUserId(authorization));
     }
 
+    // 가입한 회원 목록과 권한 정보를 관리자 화면에 전달
     @GetMapping("/users")
     public List<AdminUserResponse> getUsers(@RequestHeader("Authorization") String authorization) {
         return adminService.getUsers(getUserId(authorization));
     }
 
+    // 관리자가 선택한 상품의 가격, 할인율, 재고 수정
     @PatchMapping("/products/{productId}")
     public AdminProductResponse updateProduct(
             @RequestHeader("Authorization") String authorization,

@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-// 장바구니 API 진입점
 @RestController
+// 로그인한 사용자의 장바구니 조회, 추가, 수정, 삭제 요청 처리
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
 public class CartController {
@@ -31,11 +31,13 @@ public class CartController {
     private final CartService cartService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // 현재 로그인한 사용자의 장바구니 목록 조회
     @GetMapping
     public List<CartItemResponse> getCartItems(@RequestHeader("Authorization") String authorization) {
         return cartService.getCartItems(getUserId(authorization));
     }
 
+    // 상품 id와 수량을 받아 장바구니에 상품 추가
     @PostMapping("/items")
     @ResponseStatus(HttpStatus.CREATED)
     public CartItemResponse addCartItem(
@@ -45,6 +47,7 @@ public class CartController {
         return cartService.addCartItem(getUserId(authorization), request);
     }
 
+    // 사용자가 장바구니에 담아둔 상품의 수량 수정
     @PatchMapping("/items/{productId}")
     public CartItemResponse updateCartItem(
             @RequestHeader("Authorization") String authorization,
@@ -54,6 +57,7 @@ public class CartController {
         return cartService.updateCartItem(getUserId(authorization), productId, request);
     }
 
+    // 사용자가 선택한 상품을 장바구니에서 삭제
     @DeleteMapping("/items/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeCartItem(
@@ -63,6 +67,7 @@ public class CartController {
         cartService.removeCartItem(getUserId(authorization), productId);
     }
 
+    // 현재 사용자의 장바구니 전체 비우기
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void clearCart(@RequestHeader("Authorization") String authorization) {
@@ -70,7 +75,7 @@ public class CartController {
     }
 
     private Long getUserId(String authorization) {
-        // JWT에서 userId를 꺼내서 누구의 장바구니인지 구분함
+        // JWT에서 userId를 꺼내 누구의 장바구니인지 구분
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             throw new AuthenticationRequiredException();
         }

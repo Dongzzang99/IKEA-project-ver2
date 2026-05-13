@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+// 로그인한 사용자의 주문 생성과 주문 목록 조회 요청 처리
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class OrderController {
@@ -26,11 +27,13 @@ public class OrderController {
     private final OrderService orderService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // 현재 로그인한 사용자의 주문 목록 조회
     @GetMapping
     public List<OrderResponse> getOrders(@RequestHeader("Authorization") String authorization) {
         return orderService.getOrders(getUserId(authorization));
     }
 
+    // 장바구니 상품과 배송 정보를 기준으로 새 주문 생성
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse createOrder(
