@@ -7,6 +7,9 @@ import com.portfolio.ikea.dto.CartItemResponse;
 import com.portfolio.ikea.dto.UpdateCartItemRequest;
 import com.portfolio.ikea.exception.AuthenticationRequiredException;
 import com.portfolio.ikea.service.CartService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +34,24 @@ public class CartController {
     private final CartService cartService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    // 현재 로그인한 사용자의 장바구니 목록 조회
+    @Operation(summary = "장바구니 조회", description = "현재 로그인한 사용자의 장바구니 상품 목록을 가져오는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "장바구니 조회 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인이 필요함")
+    })
     @GetMapping
     public List<CartItemResponse> getCartItems(@RequestHeader("Authorization") String authorization) {
         return cartService.getCartItems(getUserId(authorization));
     }
 
-    // 상품 id와 수량을 받아 장바구니에 상품 추가
+    @Operation(summary = "장바구니 상품 추가", description = "사용자가 선택한 상품과 수량을 장바구니에 담는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "장바구니 상품 추가 성공"),
+            @ApiResponse(responseCode = "400", description = "입력값이 올바르지 않음"),
+            @ApiResponse(responseCode = "401", description = "로그인이 필요함"),
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "재고가 부족함")
+    })
     @PostMapping("/items")
     @ResponseStatus(HttpStatus.CREATED)
     public CartItemResponse addCartItem(
@@ -47,7 +61,14 @@ public class CartController {
         return cartService.addCartItem(getUserId(authorization), request);
     }
 
-    // 사용자가 장바구니에 담아둔 상품의 수량 수정
+    @Operation(summary = "장바구니 수량 변경", description = "장바구니에 담긴 상품의 수량을 사용자가 선택한 값으로 변경하는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "장바구니 수량 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "입력값이 올바르지 않음"),
+            @ApiResponse(responseCode = "401", description = "로그인이 필요함"),
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "재고가 부족함")
+    })
     @PatchMapping("/items/{productId}")
     public CartItemResponse updateCartItem(
             @RequestHeader("Authorization") String authorization,
@@ -57,7 +78,11 @@ public class CartController {
         return cartService.updateCartItem(getUserId(authorization), productId, request);
     }
 
-    // 사용자가 선택한 상품을 장바구니에서 삭제
+    @Operation(summary = "장바구니 상품 삭제", description = "사용자가 선택한 상품을 장바구니에서 삭제하는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "장바구니 상품 삭제 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인이 필요함")
+    })
     @DeleteMapping("/items/{productId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void removeCartItem(
@@ -67,7 +92,11 @@ public class CartController {
         cartService.removeCartItem(getUserId(authorization), productId);
     }
 
-    // 현재 사용자의 장바구니 전체 비우기
+    @Operation(summary = "장바구니 전체 비우기", description = "현재 로그인한 사용자의 장바구니를 전부 비우는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "장바구니 전체 비우기 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인이 필요함")
+    })
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void clearCart(@RequestHeader("Authorization") String authorization) {

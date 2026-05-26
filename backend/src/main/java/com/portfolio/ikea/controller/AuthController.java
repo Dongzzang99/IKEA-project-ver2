@@ -6,6 +6,9 @@ import com.portfolio.ikea.dto.LoginResponse;
 import com.portfolio.ikea.dto.SignupRequest;
 import com.portfolio.ikea.dto.SignupResponse;
 import com.portfolio.ikea.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,12 @@ public class AuthController {
     private final AuthService authService;
 
     // 회원가입 정보 전달 후 새 회원 생성
+    @Operation(summary = "회원가입", description = "사용자가 이름, 이메일, 비밀번호, 전화번호를 입력해서 계정을 만들 때 사용하는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "회원가입 성공"),
+            @ApiResponse(responseCode = "400", description = "입력값이 올바르지 않음"),
+            @ApiResponse(responseCode = "409", description = "이미 가입된 이메일")
+    })
     @PostMapping("/signup")
     public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest request) {
         SignupResponse response = authService.signup(request);
@@ -32,6 +41,12 @@ public class AuthController {
     }
 
     // 이메일, 비밀번호 확인 후 JWT와 회원 정보 전달
+    @Operation(summary = "로그인", description = "이메일과 비밀번호를 확인하고 이후 요청에서 사용할 JWT를 발급하는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "400", description = "입력값이 올바르지 않음"),
+            @ApiResponse(responseCode = "401", description = "이메일 또는 비밀번호가 맞지 않음")
+    })
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = authService.login(request);
