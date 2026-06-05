@@ -87,7 +87,6 @@ public class OrderService {
         });
 
         CustomerOrder savedOrder = orderRepository.save(order);
-        cartItemRepository.deleteByUser(user);
 
         return OrderResponse.from(savedOrder);
     }

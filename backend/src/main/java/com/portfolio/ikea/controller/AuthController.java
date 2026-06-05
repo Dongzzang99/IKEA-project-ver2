@@ -13,8 +13,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -52,5 +54,26 @@ public class AuthController {
         LoginResponse response = authService.login(request);
 
         return ResponseEntity.ok(response);
+    }
+
+    // 지금 저장된 JWT가 실제로 유효한지 확인하고 현재 로그인한 회원 정보를 가져옴
+    @Operation(summary = "현재 로그인 회원 확인", description = "브라우저에 저장된 JWT가 아직 유효한지 확인하고 로그인한 회원 정보를 다시 가져오는 API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "로그인 상태 확인 성공"),
+            @ApiResponse(responseCode = "401", description = "토큰이 없거나 만료되어 다시 로그인이 필요함")
+    })
+    @GetMapping("/me")
+    public ResponseEntity<LoginResponse> me(@RequestHeader("Authorization") String authorization) {
+        LoginResponse response = authService.getCurrentUser(getToken(authorization));
+
+        return ResponseEntity.ok(response);
+    }
+
+    private String getToken(String authorization) {
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            throw new com.portfolio.ikea.exception.AuthenticationRequiredException();
+        }
+
+        return authorization.substring(7);
     }
 }

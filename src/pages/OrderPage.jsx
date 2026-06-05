@@ -1,8 +1,10 @@
 // 주문 페이지 파일
+import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getCartItems, hasAccessToken } from "../api/cart";
 import { createOrder } from "../api/orders";
+import { failTossPayment } from "../api/payments";
 import { getImagePath } from "../utils/imagePath";
 
 const shippingOptions = [
@@ -37,6 +39,17 @@ const getLoginUser = () => {
   }
 };
 
+const getPaymentUrl = (path) =>
+  `${window.location.origin}${import.meta.env.BASE_URL}${path}`;
+
+const getTossCustomerKey = (loginUser, deliveryInfo) => {
+  if (loginUser.id) {
+    return `USER-${loginUser.id}`;
+  }
+
+  return loginUser.email || deliveryInfo.email;
+};
+
 function OrderPage() {
   const navigate = useNavigate();
   const loginUser = getLoginUser();
@@ -45,7 +58,6 @@ function OrderPage() {
   const [completedSteps, setCompletedSteps] = useState({
     shipping: false,
     deliveryInfo: false,
-    payment: false,
   });
   const [shippingMethod, setShippingMethod] = useState("SAVER");
   const [deliveryInfo, setDeliveryInfo] = useState({
@@ -57,10 +69,9 @@ function OrderPage() {
   });
   const [message, setMessage] = useState("");
   const [isOrdering, setIsOrdering] = useState(false);
-  const [completedOrder, setCompletedOrder] = useState(null);
 
   useEffect(() => {
-    // 토큰 없을 시 로그인 페이지로 이동
+    // 토큰이 없으면 주문 페이지 접근 전에 로그인 페이지로 이동
     if (!hasAccessToken()) {
       alert("주문은 로그인 후 이용할 수 있습니다.");
       navigate("/login");
@@ -85,16 +96,17 @@ function OrderPage() {
       });
   }, [navigate]);
 
-  // 배송 방법 변경 시 선택 배송 정보 재계산
   const selectedShipping = useMemo(
     () => shippingOptions.find((option) => option.value === shippingMethod),
     [shippingMethod],
   );
+
   const productTotalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0,
   );
   const totalPrice = productTotalPrice + selectedShipping.price;
+  const canOrder = completedSteps.deliveryInfo && cartItems.length > 0;
 
   const handleDeliveryChange = (event) => {
     const { name, value } = event.target;
@@ -106,17 +118,14 @@ function OrderPage() {
   };
 
   const completeShipping = () => {
-    // 배송 방법 완료 후 상세 정보 단계 이동
     setCompletedSteps({
       shipping: true,
       deliveryInfo: false,
-      payment: false,
     });
     setCheckoutStep("deliveryInfo");
   };
 
   const completeDeliveryInfo = () => {
-    // 주문 생성 전 필수 배송 정보 입력 확인
     if (
       !deliveryInfo.email ||
       !deliveryInfo.phone ||
@@ -132,24 +141,24 @@ function OrderPage() {
     setCompletedSteps({
       shipping: true,
       deliveryInfo: true,
-      payment: false,
     });
-    setCheckoutStep("payment");
-  };
-
-  const completePayment = () => {
-    // 결제 연동 전 임시 결제 완료 상태 저장
-    setCompletedSteps((prev) => ({ ...prev, payment: true }));
   };
 
   const handleCreateOrder = async () => {
-    // 주문하기 클릭 시 DB 장바구니 기준 주문 생성
+    const clientKey = import.meta.env.VITE_TOSS_CLIENT_KEY;
+
+    if (!clientKey) {
+      setMessage("VITE_TOSS_CLIENT_KEY를 .env에 설정해주세요.");
+      return;
+    }
+
     setMessage("");
     setIsOrdering(true);
 
+    let createdOrder = null;
+
     try {
-      // 결제 연동 전 단계라 지금은 주문 생성 API까지만 호출함
-      const order = await createOrder({
+      createdOrder = await createOrder({
         shippingMethod,
         email: deliveryInfo.email,
         phone: deliveryInfo.phone,
@@ -158,11 +167,44 @@ function OrderPage() {
         detailAddress: deliveryInfo.detailAddress,
       });
 
-      setCompletedOrder(order);
-      setCartItems([]);
+      const tossPayments = await loadTossPayments(clientKey);
+      const widgets = tossPayments.widgets({
+        customerKey: getTossCustomerKey(loginUser, deliveryInfo),
+      });
+      const tossOrderId = `ORDER-${createdOrder.id}`;
+      const orderName =
+        cartItems.length > 1
+          ? `${cartItems[0].title} 외 ${cartItems.length - 1}건`
+          : cartItems[0].title;
+
+      // 서버에서 주문을 먼저 만들고, DB 기준 금액을 토스 결제위젯에 설정
+      await widgets.setAmount({
+        currency: "KRW",
+        value: createdOrder.totalPrice,
+      });
+
+      const paymentWindow = await widgets.renderPaymentWindow();
+
+      paymentWindow.on("paymentRequest", async () => {
+        await widgets.requestPayment({
+          orderId: tossOrderId,
+          orderName,
+          customerName: deliveryInfo.receiverName,
+          customerEmail: deliveryInfo.email,
+          successUrl: getPaymentUrl("payment/success"),
+          failUrl: getPaymentUrl("payment/fail"),
+        });
+      });
     } catch (error) {
+      if (createdOrder) {
+        await failTossPayment({
+          orderId: `ORDER-${createdOrder.id}`,
+          code: "PAYMENT_WINDOW_FAILED",
+          message: error.message,
+        }).catch(() => {});
+      }
+
       setMessage(error.message);
-    } finally {
       setIsOrdering(false);
     }
   };
@@ -172,55 +214,10 @@ function OrderPage() {
       <div className="flex min-h-[520px] items-center justify-center bg-gray-100 px-4">
         <div className="w-full max-w-[420px] bg-white px-8 py-10 text-center shadow-sm">
           <div className="mx-auto mb-6 h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600"></div>
-          <h1 className="text-2xl font-bold">주문을 접수하고 있습니다</h1>
+          <h1 className="text-2xl font-bold">결제창을 준비하고 있습니다</h1>
           <p className="mt-3 text-sm text-gray-600">
-            장바구니 상품과 배송 정보를 확인하는 중입니다.
+            주문 금액과 재고를 확인한 뒤 토스 결제창으로 이동합니다.
           </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (completedOrder) {
-    return (
-      <div className="bg-gray-100 px-4 py-10">
-        <div className="mx-auto max-w-[760px] bg-white px-6 py-8 shadow-sm md:px-10">
-          <p className="text-sm font-bold text-blue-700">주문 완료</p>
-          <h1 className="mt-3 text-3xl font-bold">
-            주문이 정상적으로 접수되었습니다.
-          </h1>
-          <div className="mt-8 grid gap-4 border-y border-gray-200 py-6 text-sm md:grid-cols-2">
-            <div>
-              <p className="text-gray-500">주문번호</p>
-              <p className="mt-1 font-bold">#{completedOrder.id}</p>
-            </div>
-            <div>
-              <p className="text-gray-500">배송방법</p>
-              <p className="mt-1 font-bold">
-                {completedOrder.shippingMethod}
-              </p>
-            </div>
-            <div>
-              <p className="text-gray-500">받는 사람</p>
-              <p className="mt-1 font-bold">{completedOrder.receiverName}</p>
-            </div>
-            <div>
-              <p className="text-gray-500">총 결제금액</p>
-              <p className="mt-1 font-bold">
-                ₩{completedOrder.totalPrice.toLocaleString()}
-              </p>
-            </div>
-          </div>
-          <div className="mt-6 text-sm text-gray-700">
-            <p>{completedOrder.address}</p>
-            <p>{completedOrder.detailAddress}</p>
-          </div>
-          <Link
-            to="/"
-            className="mt-8 inline-flex h-12 items-center rounded-full bg-blue-600 px-6 font-bold text-white hover:bg-blue-700"
-          >
-            쇼핑 계속하기
-          </Link>
         </div>
       </div>
     );
@@ -235,12 +232,11 @@ function OrderPage() {
           title="배송방법 선택"
           isCompleted={completedSteps.shipping}
           isActive={checkoutStep === "shipping"}
-          summary={`${selectedShipping.name} · ₩${selectedShipping.price.toLocaleString()}`}
+          summary={`${selectedShipping.name} · ${selectedShipping.price.toLocaleString()}원`}
           onEdit={() => {
             setCompletedSteps({
               shipping: false,
               deliveryInfo: false,
-              payment: false,
             });
             setCheckoutStep("shipping");
           }}
@@ -269,7 +265,7 @@ function OrderPage() {
                       </p>
                     )}
                   </div>
-                  <p className="font-bold">₩{option.price.toLocaleString()}</p>
+                  <p className="font-bold">{option.price.toLocaleString()}원</p>
                 </div>
               </button>
             ))}
@@ -294,7 +290,6 @@ function OrderPage() {
             setCompletedSteps({
               shipping: true,
               deliveryInfo: false,
-              payment: false,
             });
             setCheckoutStep("deliveryInfo");
           }}
@@ -341,30 +336,6 @@ function OrderPage() {
           </button>
         </CheckoutSection>
 
-        <CheckoutSection
-          title="결제"
-          isCompleted={completedSteps.payment}
-          isActive={checkoutStep === "payment"}
-          summary="결제 확인 완료"
-          onEdit={() => {
-            setCompletedSteps({
-              shipping: true,
-              deliveryInfo: true,
-              payment: false,
-            });
-            setCheckoutStep("payment");
-          }}
-        >
-          <div className="min-h-[120px] rounded-[4px] border border-gray-300 bg-white"></div>
-          <button
-            type="button"
-            className="mt-5 h-12 rounded-full bg-blue-600 px-7 font-bold text-white hover:bg-blue-700"
-            onClick={completePayment}
-          >
-            계속
-          </button>
-        </CheckoutSection>
-
         {message && (
           <p className="mt-4 rounded-[4px] bg-white px-4 py-3 text-sm font-bold text-gray-800">
             {message}
@@ -388,7 +359,7 @@ function OrderPage() {
                 <p className="truncate text-sm font-bold">{item.title}</p>
                 <p className="mt-1 text-xs text-gray-500">수량 {item.quantity}</p>
                 <p className="mt-2 text-sm font-bold">
-                  ₩{(item.price * item.quantity).toLocaleString()}
+                  {(item.price * item.quantity).toLocaleString()}원
                 </p>
               </div>
             </div>
@@ -403,15 +374,15 @@ function OrderPage() {
 
         <button
           type="button"
-          disabled={!completedSteps.payment || cartItems.length === 0}
+          disabled={!canOrder}
           className={`mt-6 flex w-full items-center justify-between rounded-[4px] px-6 font-bold text-white transition-all ${
-            completedSteps.payment && cartItems.length > 0
+            canOrder
               ? "cursor-pointer bg-blue-600 py-8 hover:bg-blue-700"
               : "cursor-not-allowed bg-gray-300 py-6"
           }`}
           onClick={handleCreateOrder}
         >
-          <span className="text-[0.8rem] font-semibold">주문하기</span>
+          <span className="text-[0.8rem] font-semibold">결제하기</span>
           <i className="fas fa-arrow-right"></i>
         </button>
       </aside>
@@ -481,7 +452,7 @@ function SummaryRow({ label, value, isStrong = false }) {
       }`}
     >
       <span>{label}</span>
-      <span>₩{value.toLocaleString()}</span>
+      <span>{value.toLocaleString()}원</span>
     </div>
   );
 }

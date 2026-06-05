@@ -1,4 +1,4 @@
-// 주문 한 건의 배송정보와 결제금액을 저장하는 엔티티 파일
+// 주문 한 건의 배송 정보와 결제 금액을 저장하는 엔티티 파일
 package com.portfolio.ikea.entity;
 
 import jakarta.persistence.CascadeType;
@@ -22,7 +22,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-// 주문 한 건의 배송정보와 결제금액을 저장
 @Getter
 @Entity
 @Table(name = "orders")
@@ -65,8 +64,9 @@ public class CustomerOrder {
     @Column(nullable = false, length = 255)
     private String detailAddress;
 
-    @Column(nullable = false, length = 20)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private OrderStatus status;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -94,13 +94,24 @@ public class CustomerOrder {
         this.receiverName = receiverName;
         this.address = address;
         this.detailAddress = detailAddress;
-        this.status = "ORDERED";
+        this.status = OrderStatus.PENDING_PAYMENT;
     }
 
     public void addOrderItem(OrderItem orderItem) {
-        // 주문과 주문상품은 같이 저장되어야 해서 여기서 연관관계를 맞춰줌
         orderItems.add(orderItem);
         orderItem.setOrder(this);
+    }
+
+    public boolean isPendingPayment() {
+        return this.status == OrderStatus.PENDING_PAYMENT;
+    }
+
+    public void markPaid() {
+        this.status = OrderStatus.PAID;
+    }
+
+    public void markPaymentFailed() {
+        this.status = OrderStatus.PAYMENT_FAILED;
     }
 
     @PrePersist

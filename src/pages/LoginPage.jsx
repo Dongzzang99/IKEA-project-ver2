@@ -5,9 +5,22 @@ import { Link, useNavigate } from "react-router-dom";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
 
+const readResponseBody = async (response) => {
+  const text = await response.text();
+
+  if (!text) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { message: text };
+  }
+};
+
 function LoginPage() {
   const navigate = useNavigate();
-  // 로그인 입력값 저장
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -16,8 +29,6 @@ function LoginPage() {
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 입력창 값 바뀔 때마다 form에 저장
-  // input name과 form key를 맞춰 여러 입력값 관리
   const handleChange = (event) => {
     const { name, value, type, checked } = event.target;
 
@@ -27,7 +38,6 @@ function LoginPage() {
     }));
   };
 
-  // 로그인 버튼 눌렀을 때 백엔드로 보내기
   const handleSubmit = async (event) => {
     event.preventDefault();
     setMessage("");
@@ -40,20 +50,23 @@ function LoginPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: form.email,
+          email: form.email.trim(),
           password: form.password,
         }),
       });
 
-      const data = await response.json();
+      const data = await readResponseBody(response);
 
       if (!response.ok) {
         setMessage(data.message ?? "로그인에 실패했습니다.");
         return;
       }
 
-      // 로그인 성공한 회원 정보와 JWT를 브라우저에 저장
-      // JWT 저장 후 장바구니/주문/관리자 API 로그인 증명에 사용
+      if (!data.accessToken) {
+        setMessage("로그인 응답에 토큰이 없습니다. 백엔드 응답을 확인해주세요.");
+        return;
+      }
+
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem(
         "loginUser",
@@ -67,11 +80,6 @@ function LoginPage() {
       );
       window.dispatchEvent(new Event("loginUserChanged"));
       navigate("/");
-
-      setForm((prev) => ({
-        ...prev,
-        password: "",
-      }));
     } catch {
       setMessage("서버 연결을 확인해주세요.");
     } finally {
@@ -89,7 +97,7 @@ function LoginPage() {
               로그인
             </h1>
             <p className="mt-5 max-w-[340px] text-sm leading-6 text-blue-50">
-              주문 내역, 장바구니, 관심 상품을 한 곳에서 확인하세요.
+              주문 내역, 장바구니, 관리자 기능을 계정으로 확인하세요.
             </p>
           </div>
 
@@ -150,7 +158,7 @@ function LoginPage() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="mt-2 h-12 rounded-full bg-blue-600 px-6 font-bold text-white hover:bg-blue-700"
+              className="mt-2 h-12 rounded-full bg-blue-600 px-6 font-bold text-white hover:bg-blue-700 disabled:bg-gray-300"
             >
               {isSubmitting ? "로그인 처리 중" : "로그인"}
             </button>

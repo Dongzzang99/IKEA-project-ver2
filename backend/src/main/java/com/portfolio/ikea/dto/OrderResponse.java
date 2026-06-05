@@ -35,7 +35,7 @@ public class OrderResponse {
                 .receiverName(order.getReceiverName())
                 .address(order.getAddress())
                 .detailAddress(order.getDetailAddress())
-                .status(order.getStatus())
+                .status(order.getStatus().name())
                 .createdAt(order.getCreatedAt())
                 .items(order.getOrderItems().stream().map(OrderItemResponse::from).toList())
                 .build();

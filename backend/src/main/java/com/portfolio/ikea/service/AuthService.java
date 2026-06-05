@@ -8,6 +8,7 @@ import com.portfolio.ikea.dto.SignupRequest;
 import com.portfolio.ikea.dto.SignupResponse;
 import com.portfolio.ikea.entity.User;
 import com.portfolio.ikea.entity.UserRole;
+import com.portfolio.ikea.exception.AuthenticationRequiredException;
 import com.portfolio.ikea.exception.DuplicateEmailException;
 import com.portfolio.ikea.exception.InvalidLoginException;
 import com.portfolio.ikea.exception.PasswordMismatchException;
@@ -66,5 +67,14 @@ public class AuthService {
         String accessToken = jwtTokenProvider.createAccessToken(user);
 
         return LoginResponse.from(user, accessToken);
+    }
+
+    @Transactional(readOnly = true)
+    public LoginResponse getCurrentUser(String token) {
+        Long userId = jwtTokenProvider.getUserId(token);
+        User user = userRepository.findById(userId)
+                .orElseThrow(AuthenticationRequiredException::new);
+
+        return LoginResponse.from(user, null);
     }
 }

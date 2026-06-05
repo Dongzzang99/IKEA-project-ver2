@@ -1,4 +1,5 @@
 // 관리자 API 요청을 모아둔 파일
+import { clearStoredLogin } from "./auth";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
 
@@ -22,6 +23,10 @@ const requestAdmin = async (path, options = {}) => {
   const data = await response.json();
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      clearStoredLogin();
+    }
+
     throw new Error(data.message ?? "관리자 요청에 실패했습니다.");
   }
 

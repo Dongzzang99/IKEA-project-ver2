@@ -1,6 +1,7 @@
 // 상단 네비게이션과 오른쪽 패널을 관리하는 파일
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { clearStoredLogin, getCurrentUser } from "../../api/auth";
 import { getProducts } from "../../api/products";
 import { getRecentViewedProducts } from "../../api/recentViewed";
 import { getImagePath } from "../../utils/imagePath";
@@ -57,13 +58,46 @@ function ContainerNavbar() {
 
   const handleLogout = () => {
     // 로그아웃 시 브라우저에 저장된 토큰/회원 정보 삭제
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("loginUser");
+    clearStoredLogin();
     setLoginUser(null);
     setIsAccountPanelOpen(false);
     setIsRecentPanelOpen(false);
-    window.dispatchEvent(new Event("loginUserChanged"));
   };
+
+  useEffect(() => {
+    let isMounted = true;
+
+    // 화면에 남아있는 로그인 정보가 실제 서버에서도 유효한지 확인
+    getCurrentUser()
+      .then((currentUser) => {
+        if (!isMounted) {
+          return;
+        }
+
+        if (!currentUser) {
+          setLoginUser(null);
+          setIsAccountPanelOpen(false);
+          return;
+        }
+
+        localStorage.setItem(
+          "loginUser",
+          JSON.stringify({
+            id: currentUser.id,
+            name: currentUser.name,
+            email: currentUser.email,
+            phone: currentUser.phone,
+            role: currentUser.role,
+          }),
+        );
+        setLoginUser(getLoginUser());
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     // 로그인/로그아웃 변경 시 navbar 상태 동기화

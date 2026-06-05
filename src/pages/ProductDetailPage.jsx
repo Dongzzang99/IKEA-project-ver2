@@ -14,11 +14,10 @@ function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
-  
   useEffect(() => {
     getProduct(id)
       .then((data) => {
-        setQuantity(1); //제품 갯수 초기화
+        setQuantity(1);
         setIsButtonActive(false);
         setProduct(data);
         addRecentViewedProduct(data);
@@ -32,8 +31,7 @@ function ProductDetailPage() {
     if (!product) return;
 
     if (!hasAccessToken()) {
-      // DB 장바구니를 쓰기로 해서 비로그인 장바구니는 막아둠
-      alert("로그인후 이용해 주세요!");
+      alert("로그인 후 이용해 주세요!");
       return;
     }
 
@@ -44,14 +42,14 @@ function ProductDetailPage() {
           setIsButtonActive(false);
         }, 1500);
       })
-      .catch(() => {
-        alert("장바구니 담기에 실패했습니다.");
+      .catch((error) => {
+        alert(error.message);
       });
   };
 
   const handleMoveToCart = () => {
     if (!hasAccessToken()) {
-      alert("로그인후 이용해 주세요!");
+      alert("로그인 후 이용해 주세요!");
       return;
     }
 
@@ -67,6 +65,7 @@ function ProductDetailPage() {
   }
 
   const discountPrice = Math.floor(product.price * (1 - product.sale / 100));
+  const stock = product.stock ?? 0;
 
   return (
     <div className="relative p-4">
@@ -84,12 +83,15 @@ function ProductDetailPage() {
           </div>
 
           <p className="text-2xl font-bold">
-            <span className="relative top-[-0.3em] text-base">₩</span>
+            <span className="relative top-[-0.3em] text-base">원</span>
             {discountPrice.toLocaleString()}
           </p>
 
-          <p className="mb-16 text-sm text-gray-500">
-            기존가: <span>₩{product.price.toLocaleString()}</span>
+          <p className="mb-4 text-sm text-gray-500">
+            기존가: <span>{product.price.toLocaleString()}원</span>
+          </p>
+          <p className="mb-12 text-sm font-bold text-gray-700">
+            남은 재고 {stock}개
           </p>
 
           <p className="font-bold">어떻게 구매하시겠어요?</p>
@@ -128,15 +130,19 @@ function ProductDetailPage() {
               </button>
               <span className="text-lg font-medium">{quantity}</span>
               <button
-                className="cursor-pointer text-xl font-bold"
-                onClick={() => setQuantity((prev) => prev + 1)}
+                className="cursor-pointer text-xl font-bold disabled:cursor-not-allowed disabled:text-gray-300"
+                disabled={quantity >= stock}
+                onClick={() =>
+                  setQuantity((prev) => Math.min(stock, prev + 1))
+                }
               >
                 +
               </button>
             </div>
 
             <button
-              className="flex h-[40px] w-full cursor-pointer items-center justify-center rounded-full bg-blue-600 font-bold text-white transition hover:bg-blue-700 sm:flex-1"
+              className="flex h-[40px] w-full cursor-pointer items-center justify-center rounded-full bg-blue-600 font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300 sm:flex-1"
+              disabled={stock <= 0}
               onClick={handleAddToCart}
             >
               {isButtonActive ? "장바구니에 담겼습니다" : "장바구니에 담기"}

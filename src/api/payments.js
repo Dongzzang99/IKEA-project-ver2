@@ -1,4 +1,4 @@
-// 주문 API 요청을 모아둔 파일
+// 토스 결제 API 요청을 모아둔 파일
 import { clearStoredLogin } from "./auth";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
@@ -12,11 +12,11 @@ const getAuthHeaders = () => {
   };
 };
 
-export const createOrder = async (orderData) => {
-  const response = await fetch(`${API_BASE_URL}/api/orders`, {
+export const confirmTossPayment = async ({ paymentKey, orderId, amount }) => {
+  const response = await fetch(`${API_BASE_URL}/api/payments/toss/confirm`, {
     method: "POST",
     headers: getAuthHeaders(),
-    body: JSON.stringify(orderData),
+    body: JSON.stringify({ paymentKey, orderId, amount }),
   });
 
   const data = await response.json();
@@ -26,15 +26,17 @@ export const createOrder = async (orderData) => {
       clearStoredLogin();
     }
 
-    throw new Error(data.message ?? "주문 생성에 실패했습니다.");
+    throw new Error(data.message ?? "토스 결제 승인에 실패했습니다.");
   }
 
   return data;
 };
 
-export const getOrders = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/orders`, {
+export const failTossPayment = async ({ orderId, code, message }) => {
+  const response = await fetch(`${API_BASE_URL}/api/payments/toss/fail`, {
+    method: "POST",
     headers: getAuthHeaders(),
+    body: JSON.stringify({ orderId, code, message }),
   });
 
   const data = await response.json();
@@ -44,7 +46,7 @@ export const getOrders = async () => {
       clearStoredLogin();
     }
 
-    throw new Error(data.message ?? "주문 목록을 불러오지 못했습니다.");
+    throw new Error(data.message ?? "토스 결제 실패 처리에 실패했습니다.");
   }
 
   return data;

@@ -18,6 +18,8 @@ import OrderListPage from "./pages/OrderListPage";
 import AccountPage from "./pages/AccountPage";
 import SignupWelcomePage from "./pages/SignupWelcomePage";
 import AdminPage from "./pages/AdminPage";
+import PaymentSuccessPage from "./pages/PaymentSuccessPage";
+import PaymentFailPage from "./pages/PaymentFailPage";
 
 import { Route, Routes, useLocation } from "react-router-dom";
 
@@ -78,6 +80,8 @@ function App() {
             <Route path="/mypage/orders" element={<OrderListPage />} />
             <Route path="/mypage/account" element={<AccountPage />} />
             <Route path="/admin" element={<AdminPage />} />
+            <Route path="/payment/success" element={<PaymentSuccessPage />} />
+            <Route path="/payment/fail" element={<PaymentFailPage />} />
             <Route path="/ebusan" element={<BusanApi />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
