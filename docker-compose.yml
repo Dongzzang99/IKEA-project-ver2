@@ -28,7 +28,7 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/ikea_ordering?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
       DB_USERNAME: root
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
-      JWT_SECRET: ${JWT_SECRET:-portfolio-ikea-ordering-system-jwt-secret-key-2026}
+      JWT_SECRET: ${JWT_SECRET:-portfolio-ikea-ordering-system-jwt-secret-key-2026-local-docker-default}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
       TOSS_SECRET_KEY: ${TOSS_SECRET_KEY:-test_gsk_replace_me}
     ports:
